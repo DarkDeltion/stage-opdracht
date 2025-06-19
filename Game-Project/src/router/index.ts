@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CategoriesView from '../views/CategoriesView.vue'
-import PlatformView from '../views/PlatformView.vue'
-import TagsView from '../views/TagsView.vue'
-import RandomView from '../views/RandomView.vue'
+import GamesView from '../views/GamesView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
 
 const router = createRouter({
@@ -16,24 +13,9 @@ const router = createRouter({
       component: HomeView,
     },
         {
-      path: '/categories',
-      name: 'categories',
-      component: CategoriesView,
-    },
-        {
-      path: '/platform',
-      name: 'Platform',
-      component: PlatformView,
-    },
-        {
-      path: '/tags',
-      name: 'Tags',
-      component: TagsView,
-    },
-        {
-      path: '/random',
-      name: 'Random',
-      component: RandomView,
+      path: '/Games',
+      name: 'Games',
+      component: GamesView,
     },
         {
       path: '/favorites',

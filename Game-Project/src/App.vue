@@ -3,59 +3,50 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <nav>
-    <div class="nav-container">
-      <div class="nav-header">
-        <div class="logo">
+  <nav class="fixed top-0 left-0 z-[1000] w-full h-[100px] flex flex-row flex-nowrap justify-center items-center bg-[#1D2D44] shadow-[0px_5px_35px_1px_#3E5C76] text-[#F0EBD8]">
+    <div class="flex justify-start items-center w-full px-5 py-5">
+      <div class="flex gap-2.5">
+        <div class="my-auto w-[75px] h-[75px]">
           <RouterLink to="/"><img src="/GamePortLogo.png" alt="GamePort Logo"></RouterLink>
         </div>
-        <div class="title">
+        <div class="my-auto">
           <RouterLink to="/"><img src="/GamePortTitle.png" alt="GamePort"></RouterLink>
         </div>
       </div>
-
-        
-      <div class="nav-links">
-        <div class="home">
-          <RouterLink to="/" class="button">Home</RouterLink>
+      <div class="flex gap-[30px] ml-[42%]">
+        <div>
+          <RouterLink to="/" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
+            Home
+          </RouterLink>
         </div>
-        <div class="categories">
-          <RouterLink to="/categories" class="button">categories</RouterLink>
+        <div>
+          <RouterLink to="/Games" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
+            Games
+          </RouterLink>
         </div>
-        <div class="platform">
-          <RouterLink to="/platform" class="button">platform</RouterLink>
-        </div>
-        <div class="tags">
-          <RouterLink to="/tags" class="button">tags</RouterLink>
-        </div>
-        <div class="search">
-          <input type="text" placeholder="Search...">
-          <a href="" class="button">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1D2D44"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
-            search</a>
-        </div>
-        <div class="random">
-          <RouterLink to="/random" class="button">random</RouterLink>
-        </div>
-        <div class="favorites">
-          <RouterLink to="/favorites" class="button">favorites</RouterLink>
+        <div>
+          <RouterLink to="/favorites" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
+            favorites
+          </RouterLink>
         </div>
       </div>
     </div>
   </nav>
-  <div class="main-content">
+  <div class="pt-30 pb-20">
     <RouterView />
   </div>
   <footer>
-
+    <div class=" bottom-0 left-0 w-full h-[50px] flex justify-center items-center bg-[#1D2D44] text-[#F0EBD8]">
+      <p class="text-sm">&copy; 2025 GamePort. All rights reserved.</p>
+    </div>
   </footer>
 </template>
 
 <style>
  @import "tailwindcss";
- @import "./assets/index.css";
 
-.main-content {
-  padding-top: 125px; /* Same as nav height */
+body, html {
+    background-color: #0D1321;
+    color: #F0EBD8;
 }
 </style>
