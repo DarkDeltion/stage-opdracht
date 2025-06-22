@@ -22,4 +22,4 @@ export function fetchByReleaseDate(limit = 12) {
 
 export function fetchByPopularity(limit = 12) {
   return fetchGames({ 'sort-by': 'popularity' }, limit)
-}
+} 
