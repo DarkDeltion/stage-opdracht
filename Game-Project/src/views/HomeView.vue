@@ -180,9 +180,9 @@ const scrollBy = 2     // Scroll per 2
 onMounted(async () => {
   loadingPopular.value = true
   loadingNew.value = true
-  newReleases.value = await fetchByReleaseDate(40)
+  newReleases.value = (await fetchByReleaseDate()).slice(0, 40)
   loadingNew.value = false
-  popularGames.value = await fetchByPopularity(12)
+  popularGames.value = (await fetchByPopularity()).slice(0, 12)
   loadingPopular.value = false
 })
 
