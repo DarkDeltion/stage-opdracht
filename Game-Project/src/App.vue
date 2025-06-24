@@ -13,7 +13,7 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink to="/"><img src="/GamePortTitle.png" alt="GamePort"></RouterLink>
         </div>
       </div>
-      <div class="flex gap-[30px] ml-[42%]">
+      <div class="flex gap-[30px] ml-[52%]">
         <div>
           <RouterLink to="/" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
             Home
@@ -22,11 +22,6 @@ import { RouterLink, RouterView } from 'vue-router'
         <div>
           <RouterLink to="/Games" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
             Games
-          </RouterLink>
-        </div>
-        <div>
-          <RouterLink to="/favorites" class="bg-[#748CAB] text-[#1D2D44] border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]">
-            favorites
           </RouterLink>
         </div>
       </div>
