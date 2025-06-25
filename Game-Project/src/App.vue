@@ -27,7 +27,7 @@ import { RouterLink, RouterView } from 'vue-router'
       </div>
     </div>
   </nav>
-  <div class="pt-30 pb-20">
+  <div class="pt-40 pb-20">
     <RouterView />
   </div>
   <footer>

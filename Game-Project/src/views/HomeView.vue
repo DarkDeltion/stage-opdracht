@@ -22,7 +22,8 @@
           </RouterLink>
 
           <a
-            href=""
+            href="#RandomGame"
+            @click.prevent="goToRandomGame"
             class="bg-[#748CAB] text-[#1D2D44] text-center border-none px-10 py-5 rounded cursor-pointer text-base h-[40px] flex items-center justify-center box-border hover:bg-[#3E5C76] hover:text-[#F0EBD8]"
           >
             Random Game
@@ -32,52 +33,59 @@
         <header class="mb-6 mt-10">
           <h1 class="text-3xl font-bold text-gray-100 text-center">Popular Games</h1>
         </header>
-
         <div class="relative w-full">
-          <!-- Linker scrollknop voor populaire spellen -->
           <button
-            @click="scrollLeft"
-            class="absolute -left-10 top-1/2 -translate-y-1/2 z-10 bg-[#3E5C76] text-white rounded-full p-3 shadow hover:bg-[#748CAB] transition"
-            :disabled="currentIndex === 0"
             aria-label="Scroll left"
+            @click="scrollLeft"
+            class="absolute -left-8 top-1/2 -translate-y-1/2 z-10 bg-[#3E5C76] text-white rounded-full p-2 shadow hover:bg-[#748CAB] transition"
+            v-if="currentIndex > 0"
           >
-            &#8592;
+            &lt;
           </button>
-
-          <!-- Skeleton loader voor populaire spellen -->
           <div v-if="loadingPopular" class="flex justify-center gap-8 transition-all duration-500">
-            <div v-for="n in visibleCount" :key="n" class="w-[280px] h-[350px]">
-              <div class="flex flex-col animate-pulse bg-[#223355] rounded-lg shadow-[0px_0px_15px_5px_#3E5C76] p-6 w-full h-full">
-                <div class="w-full h-36 mb-4 bg-gray-200 rounded-md"></div>
-                <div class="flex flex-col flex-1 w-full space-y-2">
-                  <div class="h-6 bg-gray-200 rounded w-3/4"></div>
-                  <div class="h-4 bg-gray-200 rounded w-full"></div>
-                  <div class="mt-auto flex justify-between">
-                    <div class="h-4 bg-gray-200 rounded w-1/3"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div v-for="n in visibleCount" :key="n" class="w-[280px] h-[350px] bg-[#3E5C76] rounded-lg animate-pulse"></div>
           </div>
-
-          <!-- Populaire spellen kaarten -->
           <div v-else class="flex justify-center gap-8 transition-all duration-500">
             <router-link
               v-for="game in visibleGames"
               :key="game.id"
               :to="{ name: 'Fullpage', params: { gameTitle: game.title, id: game.id } }"
               class="no-underline"
+              @mouseenter="onHover(game.id)"
+              @mouseleave="onLeave(game.id)"
             >
               <article
                 class="flex flex-col bg-[#1D2D44] rounded-lg shadow-[0px_0px_15px_5px_#3E5C76] p-6 w-[280px] h-[350px] transition-transform duration-200 hover:scale-105"
               >
-                <div class="w-full h-36 mb-4">
+                <div class="relative w-full h-36 mb-4 overflow-hidden rounded-md">
                   <img
                     :src="game.thumbnail"
                     :alt="game.title"
-                    class="w-full h-full object-cover rounded-md shadow"
+                    width="356"
+                    height="201"
+                    class="w-full h-full object-cover rounded-md shadow absolute top-0 left-0 transition-opacity duration-200"
+                    :style="{ opacity: (hoveredGameId === game.id && videoAvailable[game.id]) ? 0 : 1 }"
                   />
+                  <!-- Spinner overlay -->
+                  <div
+                    v-if="hoveredGameId === game.id && videoLoading[game.id] && videoAvailable[game.id] !== false"
+                    class="absolute inset-0 flex items-center justify-center bg-black/40 z-10"
+                  >
+                    <span class="spinner"></span>
+                  </div>
+                  <video
+                    v-show="hoveredGameId === game.id && videoAvailable[game.id] !== false"
+                    ref="videoRefs"
+                    :data-id="game.id"
+                    class="w-full h-full object-cover rounded-md shadow absolute top-0 left-0 transition-opacity duration-200"
+                    :src="`https://www.freetogame.com/g/${game.id}/videoplayback.webm`"
+                    loop
+                    muted
+                    preload="none"
+                    playsinline
+                    @error="handleVideoError(game.id)"
+                    @canplay="handleVideoCanPlay(game.id)"
+                  ></video>
                 </div>
                 <div class="flex flex-col flex-1 w-full">
                   <h2 class="text-lg font-semibold text-left text-gray-100 mb-2">{{ game.title }}</h2>
@@ -90,57 +98,64 @@
               </article>
             </router-link>
           </div>
-
-          <!-- Rechter scrollknop voor populaire spellen -->
           <button
-            @click="scrollRight"
-            class="absolute -right-10 top-1/2 -translate-y-1/2 z-10 bg-[#3E5C76] text-white rounded-full p-3 shadow hover:bg-[#748CAB] transition"
-            :disabled="currentIndex >= popularGames.length - visibleCount"
             aria-label="Scroll right"
+            @click="scrollRight"
+            class="absolute -right-8 top-1/2 -translate-y-1/2 z-10 bg-[#3E5C76] text-white rounded-full p-2 shadow hover:bg-[#748CAB] transition"
+            v-if="currentIndex < popularGames.length - visibleCount"
           >
-            &#8594;
+            &gt;
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Nieuwe releases sectie -->
+    <!-- New Releases Section -->
     <section class="w-full max-w-7xl mx-auto mt-8">
       <header class="mb-6">
         <h1 class="text-3xl font-bold text-gray-100 text-center">New Releases</h1>
       </header>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10">
-        <!-- Skeleton loader voor nieuwe releases -->
-        <div v-if="loadingNew" v-for="n in 5" :key="n" class="w-full">
-          <div class="flex flex-col items-center animate-pulse bg-[#223355] rounded-lg shadow-[0px_0px_15px_5px_#3E5C76] p-4 min-h-[320px] max-h-[340px] overflow-hidden">
-            <div class="w-full h-28 mb-4 bg-gray-200 rounded-md"></div>
-            <div class="flex flex-col flex-1 w-full space-y-2">
-              <div class="h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
-              <div class="h-4 bg-gray-200 rounded w-full"></div>
-              <div class="mt-auto text-center space-y-1">
-                <div class="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-                <div class="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Nieuwe releases kaarten -->
+        <div v-if="loadingNew" v-for="n in 5" :key="n" class="w-full h-[340px] bg-[#3E5C76] rounded-lg animate-pulse"></div>
         <router-link
           v-else
           v-for="game in newReleases"
           :key="game.id"
           :to="{ name: 'Fullpage', params: { gameTitle: game.title, id: game.id } }"
           class="no-underline"
+          @mouseenter="onHover(game.id)"
+          @mouseleave="onLeave(game.id)"
         >
           <article
             class="flex flex-col items-center bg-[#1D2D44] rounded-lg shadow-[0px_0px_15px_5px_#3E5C76] p-4 min-h-[320px] max-h-[340px] overflow-hidden transition-transform duration-200 hover:scale-105"
           >
-            <div class="w-full h-28 mb-4">
+            <div class="w-full h-28 mb-4 relative overflow-hidden rounded-md">
               <img
                 :src="game.thumbnail"
                 :alt="game.title"
-                class="w-full h-full object-cover rounded-md shadow"
+                class="w-full h-full object-cover rounded-md shadow absolute top-0 left-0 transition-opacity duration-200"
+                :style="{ opacity: (hoveredGameId === game.id && videoAvailable[game.id]) ? 0 : 1 }"
               />
+              <!-- Spinner overlay -->
+              <div
+                v-if="hoveredGameId === game.id && videoLoading[game.id] && videoAvailable[game.id] !== false"
+                class="absolute inset-0 flex items-center justify-center bg-black/40 z-10"
+              >
+                <span class="spinner"></span>
+              </div>
+              <video
+                v-show="hoveredGameId === game.id && videoAvailable[game.id] !== false"
+                ref="videoRefs"
+                :data-id="game.id"
+                class="w-full h-full object-cover rounded-md shadow absolute top-0 left-0 transition-opacity duration-200"
+                :src="`https://www.freetogame.com/g/${game.id}/videoplayback.webm`"
+                loop
+                muted
+                preload="none"
+                playsinline
+                @error="handleVideoError(game.id)"
+                @canplay="handleVideoCanPlay(game.id)"
+              ></video>
             </div>
             <div class="flex flex-col flex-1 w-full">
               <h2 class="text-lg font-semibold text-center text-gray-100 mb-2">{{ game.title }}</h2>
@@ -158,25 +173,28 @@
 </template>
 
 <script setup>
-// Importeer Vue functies
-import { ref, computed, onMounted } from 'vue'
-// Importeer API functies voor het ophalen van spellen
-import { fetchByReleaseDate, fetchByPopularity } from '../assets/api/FreeToGameApi'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { fetchByReleaseDate, fetchByPopularity, fetchGames } from '../assets/api/FreeToGameApi'
+import { useRouter } from 'vue-router'
 
-// State voor nieuwe releases en populaire spellen
+
 const newReleases = ref([])
 const popularGames = ref([])
+const hoveredGameId = ref(null)
+const videoRefs = ref([])
+const videoAvailable = ref({})
+const videoLoading = ref({})
 
-// Laadstatus voor skeleton loaders
 const loadingPopular = ref(true)
 const loadingNew = ref(true)
 
-// Index en aantal zichtbare spellen voor scrollen
 const currentIndex = ref(0)
-const visibleCount = 4 // Toon 4 tegelijk
-const scrollBy = 2     // Scroll per 2
+const visibleCount = 4
+const scrollBy = 2
 
-// Ophalen van data bij laden van component
+const router = useRouter()
+const games = ref([])
+
 onMounted(async () => {
   loadingPopular.value = true
   loadingNew.value = true
@@ -186,13 +204,11 @@ onMounted(async () => {
   loadingPopular.value = false
 })
 
-// Berekent welke spellen zichtbaar zijn in de carrousel
 const visibleGames = computed(() => {
   const start = currentIndex.value
   return popularGames.value.slice(start, start + visibleCount)
 })
 
-// Scroll functies voor de carrousel
 function scrollLeft() {
   if (currentIndex.value > 0) {
     currentIndex.value = Math.max(0, currentIndex.value - scrollBy)
@@ -205,4 +221,67 @@ function scrollRight() {
     currentIndex.value = Math.min(maxIndex, currentIndex.value + scrollBy)
   }
 }
+
+function onHover(id) {
+  hoveredGameId.value = id
+  videoLoading.value[id] = true
+  nextTick(() => {
+    const videos = Array.from(document.querySelectorAll('video[data-id]')).filter(v => v.dataset.id == id)
+    videos.forEach(video => {
+      video.currentTime = 0
+      video.play()
+    })
+  })
+}
+
+function onLeave(id) {
+  hoveredGameId.value = null
+  videoLoading.value[id] = false
+  nextTick(() => {
+    const videos = Array.from(document.querySelectorAll('video[data-id]')).filter(v => v.dataset.id == id)
+    videos.forEach(video => {
+      video.pause()
+      video.currentTime = 0
+    })
+  })
+}
+
+function handleVideoError(id) {
+  videoAvailable.value[id] = false
+  videoLoading.value[id] = false
+}
+
+function handleVideoCanPlay(id) {
+  videoAvailable.value[id] = true
+  videoLoading.value[id] = false
+}
+
+async function loadGames() {
+  if (games.value.length === 0) {
+    games.value = await fetchGames()
+  }
+}
+
+async function goToRandomGame() {
+  await loadGames()
+  if (games.value.length > 0) {
+    const random = games.value[Math.floor(Math.random() * games.value.length)]
+    router.push({ name: 'Fullpage', params: { gameTitle: random.title, id: random.id } })
+  }
+}
 </script>
+
+<style>
+.spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 4px solid #fff;
+  border-top: 4px solid #3E5C76;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
