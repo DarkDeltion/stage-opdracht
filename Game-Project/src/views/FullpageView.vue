@@ -11,12 +11,8 @@ const currentMedia = ref(0)
 const imagesAvailable = ref(Array(totalImages).fill(true))
 
 const totalMedia = computed(() => videoAvailable.value ? totalImages + 1 : totalImages)
-
-// Track if all media failed
 const allMediaFailed = computed(() => {
-  // If video is available, at least one media is available
   if (videoAvailable.value) return false
-  // If all images are unavailable, show error
   return imagesAvailable.value.every(avail => !avail)
 })
 
@@ -30,36 +26,27 @@ onMounted(async () => {
 function prevMedia() {
   if (currentMedia.value > 0) currentMedia.value--
 }
-
 function nextMedia() {
   if (currentMedia.value < totalMedia.value - 1) currentMedia.value++
 }
-
 function handleVideoError() {
   videoAvailable.value = false
-  // If we were on the video, go to first image
   if (currentMedia.value === 0) currentMedia.value = 0
 }
-
-// If video becomes unavailable and we're on the video, go to first image
 watch(videoAvailable, (val) => {
   if (!val && currentMedia.value === 0) {
     currentMedia.value = 0
   }
 })
-
 function handleImageError(idx) {
   imagesAvailable.value[idx] = false
-  // If the current image failed and it's being shown, check if any image is available
   if (!videoAvailable.value && imagesAvailable.value.every(avail => !avail)) {
-    // All images failed, force reactivity
     imagesAvailable.value = [...imagesAvailable.value]
   }
 }
 </script>
 
 <template>
-  <!-- loading -->
   <section v-if="loading">
     <div class="flex flex-col items-center justify-center min-h-[40vh]">
       <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[#3E5C76] border-b-4 border-[#748CAB] mb-6"></div>
@@ -100,7 +87,7 @@ function handleImageError(idx) {
                 <video
                   v-if="videoAvailable && currentMedia === 0"
                   :src="`https://www.freetogame.com/g/${game.id}/videoplayback.webm`"
-                  class="w-full max-w-3xl h-72 object-cover rounded-lg"
+                  class="w-full max-w-3xl object-cover rounded-lg"
                   controls
                   playsinline
                   autoplay
@@ -112,7 +99,7 @@ function handleImageError(idx) {
                   v-else
                   :src="`https://www.freetogame.com/g/${game.id}/${game.title.toLowerCase().replace(/ /g, '-')}-${videoAvailable ? currentMedia : currentMedia + 1}.jpg`"
                   :alt="`${game.title} screenshot ${videoAvailable ? currentMedia : currentMedia + 1}`"
-                  class="w-full max-w-3xl h-72 object-cover rounded-lg"
+                  class="w-full max-w-3xl object-cover rounded-lg"
                   @error="handleImageError(videoAvailable ? currentMedia - 1 : currentMedia)"
                   v-show="imagesAvailable[videoAvailable ? currentMedia - 1 : currentMedia]"
                 />
@@ -169,15 +156,14 @@ function handleImageError(idx) {
               </span>
             </span>
           </div>
-        </div>
+          </div>
 
         <div class="flex mt-15">
-          <!-- rightside {play game} -->
           <div class="md:col-span-1 flex flex-col items-center" >
             <div class="text-sm text-center text-[#748CAB]">
               <p>For more information, visit the official game page.</p>
             </div>
-            <a :href="game.game_url" target="_blank" rel="noopener noreferrer" class="bg-[#3E5C76] text-[#F0EBD8] px-6 py-3 rounded-lg font-semibold hover:bg-[#748CAB] transition-colors mb-4">
+            <a :href="game.game_url" target="_blank" rel="noopener noreferrer" class="bg-[#3E5C76] text-[#F0EBD8] px-6 py-3 mt-5 rounded-lg font-semibold hover:bg-[#748CAB] transition-colors mb-4">
               Play Game
             </a>
           </div>
@@ -186,7 +172,6 @@ function handleImageError(idx) {
     </div>
   </section>  
 
-  <!-- game not found -->
   <section v-else>
     <div class="flex flex-col items-center justify-center min-h-[40vh]">
       <svg class="w-16 h-16 text-[#3E5C76] mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
