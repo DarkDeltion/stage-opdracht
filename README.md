@@ -1,6 +1,8 @@
 # stage-opdracht
 
-Dit is mijn project voor het bedrijf Vitrion/Verbleif.
+(Niet aangenomen voor stage)
+
+Dit Was mijn project voor het bedrijf Vitrion/Verbleif.
 
 Ik heb met een beetje Chat-gpt {als ik eerlijk ben} gemaakt.
 
